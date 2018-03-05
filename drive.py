@@ -12,6 +12,8 @@ from PIL import Image
 from flask import Flask
 from io import BytesIO
 
+import cv2
+
 from keras.models import load_model
 import h5py
 from keras import __version__ as keras_version
@@ -47,6 +49,9 @@ controller = SimplePIController(0.1, 0.002)
 set_speed = 9
 controller.set_desired(set_speed)
 
+def shrink(a, S=2): # S : shrink factor
+    new_shp = np.vstack((np.array(a.shape)//S,[S]*a.ndim)).ravel('F')
+    return a.reshape(new_shp).mean(tuple(1+2*np.arange(a.ndim)))
 
 @sio.on('telemetry')
 def telemetry(sid, data):
@@ -60,7 +65,17 @@ def telemetry(sid, data):
         # The current image from the center camera of the car
         imgString = data["image"]
         image = Image.open(BytesIO(base64.b64decode(imgString)))
+        #image = image.resize((160, 80),Image.ANTIALIAS)
+        image = image.resize((160, 80))
         image_array = np.asarray(image)
+        # resize image
+        #image_array = np.asarray(timage)
+        # Convert RGB to BGR
+        #print(image.shape)
+        #print(timage.shape)
+        #print(image_array.shape)
+        #image_array = np.array(cv_image)
+        #steering_angle = float(model.predict(image_array, batch_size=1))
         steering_angle = float(model.predict(image_array[None, :, :, :], batch_size=1))
 
         throttle = controller.update(float(speed))
