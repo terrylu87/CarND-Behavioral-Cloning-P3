@@ -74,6 +74,7 @@ The model used an adam optimizer, so the learning rate was not tuned manually (m
 
 Training data was chosen to keep the vehicle driving on center of the road. I recorded two datasets,one used keyboard another used mouse. The data created by mouse offers a smoother driving manner in the result model.
 I first recorded two laps, driving forward and backword on the track. After training on those data, the model fails to turn on the connors without the line ( see the example below ). So I recorded more data on that connor and trained the model again. Then the car drove nicely on those connors and able to drive 3 laps autonomously.
+
 ![alt text][image1]
 
 ### Simulation
