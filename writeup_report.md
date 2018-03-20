@@ -79,10 +79,11 @@ The the portion of train and validation set is 0.8:0.2. My plan is start with th
 I add batch normalization after each activation. And dropout is added after each dense layer. I read the paper of batch normalization, they said batch normalization can provide some regulrazation effect. So I lower the dropout rate to 20%. It's interesting to see the difference with and without dropout. Below is the table of the training and validating result.
 The result shows dropout version is significantly better for low variance between train and val set. The second epoch provide the best averange loss in validation set. So I use the weight recorded after second epoch.
 
-| epochs  | BN only                  | BN+dropout               |
-| 1 epoch | 0.018/train , 0.0187/val | 0.1036/train, 0.0166/val |
-| 2 epoch | 0.013/train , 0.0204/val | 0.017/train , 0.0156/val |
-| 3 epoch | 0.0074/train, 0.0206/val | 0.013/train , 0.0165/val |
+| epochs      | BN only                     | BN+dropout                  |
+| :---------: | :-------------------------: | :-------------------------: |
+| 1 epoch     | 0.018/train , 0.0187/val    | 0.1036/train, 0.0166/val    |
+| 2 epoch     | 0.013/train , 0.0204/val    | 0.017/train , 0.0156/val    |
+| 3 epoch     | 0.0074/train, 0.0206/val    | 0.013/train , 0.0165/val    |
 
 
 #### 3. Model parameter tuning
