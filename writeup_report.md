@@ -38,7 +38,7 @@ The model.py file contains the code for training and saving the convolution neur
 
 #### 1. An appropriate model architecture has been employed
 
-I use the Nvidia's Model. I normalize and crop the image before put it into the network, works well for the first track.
+I use the Nvidia's Model. I normalize and crop the image before put it into the network, works well for the first track. My first attempt to use generator result in a much slower traing time and worse training result. Because the input image is resized and my RAM is big enough to fit those training data, I just abandoned the generator in the first submition. But it's intresting to investigate that problem. I found that the 'steps_per_epoch' parameter was given a wrong number. It is given the number of the training samples. It should be devide by batch size. So when I set the batch size to 6, it actually run 6 epochs for one 'epoch', and is 6 times slower for that 'epoch'. After 3 'epochs', I actually run 18 epochs, which lead to overfitting and worse performance. After I devide the number by the batch size, everything works nice.
 My final model consisted of the following layers:
 
 | Layer                   | Description                                     |
@@ -48,27 +48,46 @@ My final model consisted of the following layers:
 | Cropping                |                                                 |
 | Convolution 5x5x24      | 2x2 stride                                      |
 | RELU                    |                                                 |
+| BATCH NORM              |                                                 |
 | Convolution 5x5x36      | 2x2 stride                                      |
 | RELU                    |                                                 |
+| BATCH NORM              |                                                 |
 | Convolution 5x5x48      | 2x2 stride                                      |
 | RELU                    |                                                 |
+| BATCH NORM              |                                                 |
 | Convolution 3x3x64      | 1x1 stride                                      |
 | RELU                    |                                                 |
+| BATCH NORM              |                                                 |
 | Convolution 3x3x64      | 1x1 stride                                      |
 | RELU                    |                                                 |
+| BATCH NORM              |                                                 |
 | Fully connected 100     |                                                 |
+| BATCH NORM              |                                                 |
+| DROPOUT                 |                                                 |
 | Fully connected 50      |                                                 |
+| BATCH NORM              |                                                 |
+| DROPOUT                 |                                                 |
 | Fully connected 10      |                                                 |
+| BATCH NORM              |                                                 |
+| DROPOUT                 |                                                 |
 | Fully connected 1       |                                                 |
 
 
 #### 2. Attempts to reduce overfitting in the model
 
-The the portion of train and validation set is 0.8:0.2. My plan is start with the Nvidia's Model. And then apply some regulrazation method like dropout,and batch normalization to improve the model. But the model works too well,so that after 3 epochs training, the car is already able to drive pretty good on the first track. I'm too lazy to add any of the regulrazation code after that.
+The the portion of train and validation set is 0.8:0.2. My plan is start with the Nvidia's Model. And then apply some regulrazation method like dropout,and batch normalization to improve the model. But the model works too well,so that after 3 epochs training, the car is already able to drive pretty good on the first track. 
+I add batch normalization after each activation. And dropout is added after each dense layer. I read the paper of batch normalization, they said batch normalization can provide some regulrazation effect. So I lower the dropout rate to 20%. It's interesting to see the difference with and without dropout. Below is the table of the training and validating result.
+The result shows dropout version is significantly better for low variance between train and val set. The second epoch provide the best averange loss in validation set. So I use the weight recorded after second epoch.
+
+| epochs  | BN only                  | BN+dropout               |
+| 1 epoch | 0.018/train , 0.0187/val | 0.1036/train, 0.0166/val |
+| 2 epoch | 0.013/train , 0.0204/val | 0.017/train , 0.0156/val |
+| 3 epoch | 0.0074/train, 0.0206/val | 0.013/train , 0.0165/val |
+
 
 #### 3. Model parameter tuning
 
-The model used an adam optimizer, so the learning rate was not tuned manually (model.py line 68).
+The model used an adam optimizer, so the learning rate was not tuned manually (model.py line 126).
 
 #### 4. Appropriate training data
 
@@ -79,4 +98,4 @@ I first recorded two laps, driving forward and backword on the track. After trai
 
 ### Simulation
 
-The car is able to drive itself for at least 3 laps on the first track. The run1.mp4 is a sample lap I recorded.
+The car is able to drive itself for at least 3 laps on the first track. The video.mp4 is a sample lap I recorded.
